@@ -1,0 +1,130 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ─── Design Tokens ──────────────────────────────────────── */
+:root {
+  --space-black: #050a14;
+  --deep-navy: #070f1f;
+  --nebula-blue: #0d1f3c;
+  --star-white: #e8f4ff;
+  --cosmic-blue: #3b82f6;
+  --orbit-cyan: #06b6d4;
+  --solar-gold: #f59e0b;
+  --mars-red: #ef4444;
+  --aurora-green: #10b981;
+  --glass-border: rgba(59, 130, 246, 0.2);
+  --glass-bg: rgba(7, 15, 31, 0.7);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--space-black);
+  font-family: 'Inter', sans-serif;
+  color: var(--star-white);
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--deep-navy); }
+::-webkit-scrollbar-thumb { background: var(--cosmic-blue); border-radius: 2px; }
+
+/* ─── Glass Card ─────────────────────────────────────────── */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+}
+
+.glass-hover {
+  transition: all 0.3s ease;
+}
+.glass-hover:hover {
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+  transform: translateY(-1px);
+}
+
+/* ─── Glow Effects ───────────────────────────────────────── */
+.glow-blue { box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
+.glow-cyan  { box-shadow: 0 0 20px rgba(6, 182, 212, 0.4); }
+.glow-gold  { box-shadow: 0 0 20px rgba(245, 158, 11, 0.4); }
+
+.text-glow-blue { text-shadow: 0 0 20px rgba(59, 130, 246, 0.8); }
+.text-glow-cyan { text-shadow: 0 0 20px rgba(6, 182, 212, 0.8); }
+
+/* ─── Pulse Dot ──────────────────────────────────────────── */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(1.4); }
+}
+.pulse-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+/* ─── Orbit animation ────────────────────────────────────── */
+@keyframes orbit-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.orbit-ring {
+  animation: orbit-spin 8s linear infinite;
+  transform-origin: center;
+}
+
+/* ─── Stars background ───────────────────────────────────── */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50%       { opacity: 1; }
+}
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle var(--dur, 3s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+/* ─── ISS path line ──────────────────────────────────────── */
+@keyframes dash-flow {
+  to { stroke-dashoffset: -100; }
+}
+.iss-path { animation: dash-flow 3s linear infinite; }
+
+/* ─── Fade slide in ──────────────────────────────────────── */
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeSlideIn 0.5s ease forwards; }
+
+/* ─── Gradient text ──────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 50%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Loader ─────────────────────────────────────────────── */
+@keyframes spin { to { transform: rotate(360deg); } }
+.loader {
+  width: 40px; height: 40px;
+  border: 3px solid rgba(59, 130, 246, 0.2);
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
