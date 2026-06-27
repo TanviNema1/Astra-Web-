@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AstraWatch — Project Report</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & Base ───────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:   #050a14;
+      --navy:    #070f1f;
+      --blue:    #3b82f6;
+      --cyan:    #06b6d4;
+      --purple:  #a78bfa;
+      --green:   #10b981;
+      --gold:    #f59e0b;
+      --red:     #ef4444;
+      --white:   #e8f4ff;
+      --muted:   #64748b;
+      --border:  rgba(59,130,246,0.25);
+    }
+
+    html { font-size: 15px; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--black);
+      color: var(--white);
+      line-height: 1.7;
+      padding: 0;
+    }
+
+    /* ── Download Bar ───────────────────────────────── */
+    #download-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7,15,31,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 40px;
+      gap: 12px;
+    }
+
+    #download-bar .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      background: linear-gradient(135deg, var(--blue), var(--cyan), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    #download-bar .brand svg { flex-shrink: 0; }
+
+    #download-bar .meta {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    #download-bar .actions { display: flex; gap: 10px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: #fff;
+      border-color: var(--blue);
+    }
+    .btn-primary:hover { background: #2563eb; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(59,130,246,0.4); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border-color: rgba(100,116,139,0.3);
+    }
+    .btn-ghost:hover { color: var(--white); border-color: var(--border); }
+
+    /* ── Page Layout ────────────────────────────────── */
+    .page {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 40px 80px;
+    }
+
+    /* ── Cover ──────────────────────────────────────── */
+    .cover {
+      text-align: center;
+      padding: 60px 0 50px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 48px;
+      position: relative;
+    }
+
+    .cover::before {
+      content: '';
+      position: absolute;
+      top: -20px; left: 50%; transform: translateX(-50%);
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cover-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(59,130,246,0.12);
+      border: 1px solid rgba(59,130,246,0.3);
+      border-radius: 99px;
+      padding: 5px 14px;
+      font-size: 0.75rem;
+      color: var(--blue);
+      font-family: 'Space Grotesk', sans-serif;
+      margin-bottom: 20px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .cover h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 50%, var(--purple) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.15;
+      margin-bottom: 10px;
+    }
+
+    .cover .subtitle {
+      font-size: 1.1rem;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    .cover-meta {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .cover-meta-item { text-align: center; }
+    .cover-meta-item .label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .cover-meta-item .value { font-size: 0.9rem; font-weight: 600; color: var(--white); font-family: 'Space Grotesk', sans-serif; }
+
+    /* ── Section ────────────────────────────────────── */
+    .section { margin-bottom: 44px; }
+
+    .section-number {
+      font-size: 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+    }
+
+    h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--white);
+      border-left: 3px solid var(--blue);
+      padding-left: 14px;
+      margin-bottom: 18px;
+    }
+
+    h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--cyan);
+      margin: 22px 0 10px;
+    }
+
+    p { margin-bottom: 14px; color: #c1d3ea; }
+
+    a { color: var(--cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Tables ─────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; margin: 16px 0; border-radius: 10px; border: 1px solid var(--border); }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+
+    thead th {
+      background: rgba(59,130,246,0.1);
+      color: var(--blue);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 9px 14px;
+      border-bottom: 1px solid rgba(59,130,246,0.08);
+      color: #c1d3ea;
+      vertical-align: top;
+    }
+
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: rgba(59,130,246,0.04); }
+
+    .tick { color: var(--green); font-weight: 700; }
+    .cross { color: var(--red); }
+    .opt  { color: var(--gold); }
+
+    /* ── Code ───────────────────────────────────────── */
+    pre {
+      background: rgba(7,15,31,0.8);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      overflow-x: auto;
+      margin: 14px 0;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: #7dd3fc;
+      line-height: 1.6;
+    }
+
+    p code, li code {
+      background: rgba(59,130,246,0.12);
+      border: 1px solid rgba(59,130,246,0.2);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 0.8rem;
+      color: var(--cyan);
+    }
+
+    /* ── Lists ──────────────────────────────────────── */
+    ul, ol { padding-left: 22px; margin-bottom: 14px; color: #c1d3ea; }
+    li { margin-bottom: 6px; }
+
+    /* ── Cards ──────────────────────────────────────── */
+    .card {
+      background: rgba(7,15,31,0.6);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin: 14px 0;
+    }
+
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; margin: 14px 0; }
+
+    .stat-card {
+      background: rgba(7,15,31,0.7);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      text-align: center;
+    }
+    .stat-card .stat-value { font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; font-weight: 600; color: var(--cyan); }
+    .stat-card .stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+
+    /* ── Callout ─────────────────────────────────────── */
+    .callout {
+      display: flex;
+      gap: 12px;
+      background: rgba(59,130,246,0.07);
+      border: 1px solid rgba(59,130,246,0.25);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin: 14px 0;
+      font-size: 0.88rem;
+      color: #c1d3ea;
+    }
+    .callout .icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+
+    .challenge-card {
+      background: rgba(7,15,31,0.6);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin: 12px 0;
+    }
+    .challenge-card .problem { font-size: 0.78rem; font-weight: 600; color: var(--red); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+    .challenge-card .solution { font-size: 0.78rem; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: 0.06em; margin: 10px 0 6px; }
+    .challenge-card p { margin: 0; font-size: 0.88rem; }
+
+    /* ── TOC ─────────────────────────────────────────── */
+    .toc { column-count: 2; column-gap: 28px; }
+    .toc ol { padding-left: 18px; }
+    .toc li { margin-bottom: 5px; font-size: 0.88rem; }
+
+    /* ── Divider ─────────────────────────────────────── */
+    hr { border: none; border-top: 1px solid var(--border); margin: 36px 0; }
+
+    /* ── Footer ──────────────────────────────────────── */
+    .report-footer {
+      text-align: center;
+      padding: 32px 0 0;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    /* ── Color Swatches ──────────────────────────────── */
+    .swatch-grid { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0; }
+    .swatch { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; }
+    .swatch-dot { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+
+    /* ── Print Styles ────────────────────────────────── */
+    @media print {
+      #download-bar { display: none !important; }
+      body { background: #fff !important; color: #111 !important; font-size: 12px; }
+      .page { padding: 20px 30px; max-width: 100%; }
+      :root { --black: #fff; --navy: #f8f9fa; --white: #111; --border: #dde; --muted: #666; }
+      h2 { border-left-color: #3b82f6; color: #111; }
+      h3 { color: #0891b2; }
+      p, li, td { color: #333 !important; }
+      thead th { background: #f0f4ff !important; color: #3b82f6 !important; }
+      pre { background: #f8f9fa !important; border-color: #dde !important; }
+      code { color: #0e7490 !important; }
+      p code, li code { background: #f0f4ff !important; color: #0e7490 !important; }
+      .cover h1 { -webkit-text-fill-color: #3b82f6 !important; }
+      .card, .stat-card, .challenge-card, .callout { background: #f8f9fa !important; border-color: #dde !important; }
+      .cover::before { display: none; }
+      .cover-badge { background: #f0f4ff !important; }
+      a { color: #0e7490; }
+      @page { margin: 18mm 18mm 18mm 18mm; size: A4; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Download Bar ─────────────────────────────────────── -->
+<div id="download-bar">
+  <div class="brand">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+    </svg>
+    AstraWatch — Project Report
+  </div>
+  <div class="meta">June 2026 &nbsp;·&nbsp; Tanvi Nema</div>
+  <div class="actions">
+    <a href="/" class="btn btn-ghost">← Back to App</a>
+    <button class="btn btn-primary" onclick="window.print()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download PDF
+    </button>
+  </div>
+</div>
+
+<!-- ── Report Content ────────────────────────────────────── -->
+<div class="page">
+
+  <!-- Cover -->
+  <div class="cover">
+    <div class="cover-badge">🛰&nbsp; Project Submission Report</div>
+    <h1>AstraWatch</h1>
+    <p class="subtitle">Real-Time Space Tracker — Live ISS, Satellites & Night Sky</p>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="label">Submitted by</div>
+        <div class="value">Tanvi Nema</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Date</div>
+        <div class="value">June 2026</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Repository</div>
+        <div class="value"><a href="https://github.com/TanviNema1/Astra-Web-">github.com/TanviNema1</a></div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Live Demo</div>
+        <div class="value"><a href="https://astra-web-git-main-tanvi-nemas-projects.vercel.app">Vercel ↗</a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOC -->
+  <div class="section">
+    <div class="section-number">Contents</div>
+    <h2>Table of Contents</h2>
+    <div class="toc">
+      <ol>
+        <li>Executive Summary</li>
+        <li>Project Objectives</li>
+        <li>System Architecture</li>
+        <li>Technology Stack</li>
+        <li>Feature Breakdown</li>
+        <li>API Integrations & Data Sources</li>
+        <li>UI/UX Design System</li>
+        <li>Component & Hook Architecture</li>
+        <li>Deployment & DevOps</li>
+        <li>Challenges & Solutions</li>
+        <li>Performance Metrics</li>
+        <li>Future Scope</li>
+        <li>Conclusion</li>
+      </ol>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- 1. Executive Summary -->
+  <div class="section">
+    <div class="section-number">Section 01</div>
+    <h2>Executive Summary</h2>
+    <p><strong>AstraWatch</strong> is a real-time space tracking web application that brings live orbital data to the browser in a visually immersive format. The application enables users to track the <strong>International Space Station (ISS)</strong> on an interactive 3D globe, visualize hundreds of active satellites in orbit, and explore tonight's planetary sky — all personalized to their current location.</p>
+    <p>Built entirely with modern web technologies (<strong>React 19</strong>, <strong>Vite 5</strong>, <strong>Tailwind CSS v4</strong>), deployed on <strong>Vercel</strong> with continuous delivery from GitHub, and powered by free, publicly accessible astronomy APIs with graceful fallbacks — no mandatory API keys, no backend server, no installation required.</p>
+    <p>The interface follows a deep-space mission control aesthetic with glassmorphism panels, animated star fields, and live telemetry readouts — designed to make orbital data accessible to anyone with a browser.</p>
+  </div>
+
+  <!-- 2. Objectives -->
+  <div class="section">
+    <div class="section-number">Section 02</div>
+    <h2>Project Objectives</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Objective</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Display the ISS position in real time on a 3D globe</td><td class="tick">✅ Achieved</td></tr>
+          <tr><td>2</td><td>Show ISS orbital trail (last 30 recorded positions)</td><td class="tick">✅ Achieved</td></tr>
+          <tr><td>3</td><td>Render 200+ live satellite positions from real TLE data</td><td class="tick">✅ Achieved</td></tr>
+          <tr><td>4</td><td>Provide ISS telemetry: altitude, velocity, visibility, lat/lng</td><td class="tick">✅ Achieved</td></tr>
+          <tr><td>5</td><td>Show tonight's planetary sky view with per-user location</td><td class="tick">✅ Achieved</td></tr>
+          <tr><td>6</td><td>Detect user location without requiring manual input</td><td class="tick">✅ Achieved</td></tr>
+          <tr><td>7</td><td>Operate without mandatory API keys (open-source data only)</td><td class="tick">✅ Achieved</td></tr>
+          <tr><td>8</td><td>Deploy publicly with HTTPS on a production domain</td><td class="tick">✅ Achieved</td></tr>
+          <tr><td>9</td><td>Maintain graceful offline/API-failure fallbacks</td><td class="tick">✅ Achieved</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 3. Architecture -->
+  <div class="section">
+    <div class="section-number">Section 03</div>
+    <h2>System Architecture</h2>
+    <p>AstraWatch follows a <strong>client-side Single Page Application (SPA)</strong> architecture. All data fetching, orbital computation, and rendering happen entirely in the browser — there is no backend server or database.</p>
+    <pre><code>┌─────────────────────────────────────────────────────────┐
+│                        Browser                          │
+│                                                         │
+│  ┌──────────────┐    ┌──────────────┐    ┌───────────┐  │
+│  │  React 19    │    │  Globe.GL    │    │Canvas API │  │
+│  │  Component   │───▶│  (Three.js)  │    │Star Field │  │
+│  │  Tree        │    │  3D Renderer │    │           │  │
+│  └──────┬───────┘    └──────────────┘    └───────────┘  │
+│         │                                               │
+│  ┌──────▼──────────────────────────────────┐            │
+│  │          Custom React Hooks             │            │
+│  │  useISS() │ useSatellites() │ usePlanets()           │
+│  └──────┬────────────┬──────────────┬──────┘            │
+└─────────┼────────────┼──────────────┼───────────────────┘
+          │            │              │
+          ▼            ▼              ▼
+   WhereTheISS    CelesTrak       Astronomy API
+   (ISS Position) (TLE Data)     (Planet Positions)
+                               OR Meeus fallback</code></pre>
+    <h3>Data Flow</h3>
+    <ol>
+      <li><strong>On mount:</strong> All three hooks fire simultaneously — <code>useISS</code> fetches ISS position, <code>useSatellites</code> fetches TLE data and propagates satellite positions, <code>usePlanets</code> computes/fetches planet data.</li>
+      <li><strong>Every 5 seconds:</strong> <code>useISS</code> re-polls the ISS API and appends the new position to the trail buffer (circular buffer, last 30 points).</li>
+      <li><strong>Every 10 seconds:</strong> <code>useSatellites</code> re-runs SGP4 propagation on cached TLEs to update satellite dot positions without re-fetching.</li>
+      <li><strong>On data change:</strong> React re-renders only affected components; Globe.GL layers update in place without reinitializing the WebGL context.</li>
+    </ol>
+  </div>
+
+  <!-- 4. Stack -->
+  <div class="section">
+    <div class="section-number">Section 04</div>
+    <h2>Technology Stack</h2>
+
+    <h3>Core Framework</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Package</th><th>Version</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>react</code></td><td>^19.2.7</td><td>UI component framework</td></tr>
+          <tr><td><code>react-dom</code></td><td>^19.2.7</td><td>DOM rendering</td></tr>
+          <tr><td><code>vite</code></td><td>^5.4.0</td><td>Build tool & dev server (stable rollup bundler)</td></tr>
+          <tr><td><code>@vitejs/plugin-react</code></td><td>^4.3.1</td><td>Babel/React Fast Refresh plugin</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>3D & Visualization</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Package</th><th>Version</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>globe.gl</code></td><td>^2.46.1</td><td>High-level WebGL globe renderer</td></tr>
+          <tr><td><code>three</code></td><td>^0.185.0</td><td>3D engine underlying Globe.GL</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Astronomy & Data</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Package</th><th>Version</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>satellite.js</code></td><td>^4.1.4</td><td>SGP4/SDP4 orbital propagation (pure JS)</td></tr>
+          <tr><td><code>axios</code></td><td>^1.18.1</td><td>HTTP client</td></tr>
+          <tr><td><code>lucide-react</code></td><td>^1.21.0</td><td>SVG icon library</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Styling</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Package</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>tailwindcss</code> ^4.1.10</td><td>Utility-first CSS framework (v4)</td></tr>
+          <tr><td><code>@tailwindcss/vite</code> ^4.1.10</td><td>Vite Tailwind v4 integration</td></tr>
+          <tr><td>Vanilla CSS (<code>index.css</code>)</td><td>Custom design tokens, keyframe animations</td></tr>
+          <tr><td>Google Fonts</td><td>Inter, Space Grotesk, JetBrains Mono</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 5. Features -->
+  <div class="section">
+    <div class="section-number">Section 05</div>
+    <h2>Feature Breakdown</h2>
+
+    <h3>5.1 — Interactive 3D Globe</h3>
+    <p>Powered by Globe.GL (Three.js wrapper) with GPU-accelerated WebGL rendering. Features a photorealistic Blue Marble Earth texture, topographic bump map, and a night sky background panorama.</p>
+    <ul>
+      <li><strong>ISS Marker</strong> — cyan dot, size 1.5, altitude = orbital height ÷ Earth radius</li>
+      <li><strong>Satellite Cloud</strong> — up to 200 purple dots from live TLE propagation</li>
+      <li><strong>ISS Trail</strong> — 30 consecutive arc segments with opacity fade showing recent path</li>
+      <li><strong>Camera</strong> — smooth 1-second fly-to animation on each ISS position update</li>
+      <li><strong>Controls</strong> — auto-rotate at 0.5 rpm, momentum damping, zoom & pan</li>
+    </ul>
+
+    <h3>5.2 — ISS Live Telemetry Panel</h3>
+    <p>Left sidebar with a 2×3 stat grid, refreshed every 5 seconds:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Stat</th><th>Source Field</th><th>Unit</th></tr></thead>
+        <tbody>
+          <tr><td>Latitude</td><td><code>issData.latitude</code></td><td>° (4 d.p.)</td></tr>
+          <tr><td>Longitude</td><td><code>issData.longitude</code></td><td>° (4 d.p.)</td></tr>
+          <tr><td>Altitude</td><td><code>issData.altitude</code></td><td>km</td></tr>
+          <tr><td>Velocity</td><td><code>issData.velocity</code></td><td>km/h</td></tr>
+          <tr><td>Visibility</td><td><code>issData.visibility</code></td><td>Day / Night</td></tr>
+          <tr><td>Last Update</td><td><code>issData.timestamp</code></td><td>Local time</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>5.3 — Satellite Visualization</h3>
+    <p>TLE data is fetched from CelesTrak's "visual" group on mount, parsed into <code>satellite.js</code> satrec objects, and propagated via SGP4 to compute current geographic positions. Re-propagated every 10 seconds using cached TLEs. Hardcoded fallback TLE set (ISS + 5 Starlinks) activates silently on CORS/network failure.</p>
+
+    <h3>5.4 — Night Sky Panel</h3>
+    <ul>
+      <li><strong>Animated canvas star field</strong> — 200 procedurally-placed stars with independent twinkle animation at 60fps</li>
+      <li><strong>Planet cards</strong> for all 7 planets: altitude, azimuth, magnitude, constellation, distance, visible/horizon badge, and an animated altitude progress bar</li>
+      <li>Supports live Astronomy API data with automatic Meeus algorithm fallback</li>
+    </ul>
+
+    <h3>5.5 — Geolocation & Reverse Geocoding</h3>
+    <p>Uses the browser <code>navigator.geolocation</code> API to detect the user's position, then reverse-geocodes via Nominatim (OpenStreetMap, no API key) to display a human-readable city name in the navbar. Defaults to New Delhi (28.6°N, 77.2°E) if permission is denied.</p>
+  </div>
+
+  <!-- 6. APIs -->
+  <div class="section">
+    <div class="section-number">Section 06</div>
+    <h2>API Integrations & Data Sources</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Data</th><th>Source</th><th>Auth</th><th>Interval</th></tr></thead>
+        <tbody>
+          <tr><td>ISS Position</td><td>WhereTheISS.at API</td><td class="tick">None</td><td>5 seconds</td></tr>
+          <tr><td>Satellite TLEs</td><td>CelesTrak (visual group)</td><td class="tick">None</td><td>On mount</td></tr>
+          <tr><td>Reverse Geocoding</td><td>Nominatim / OpenStreetMap</td><td class="tick">None</td><td>Once on load</td></tr>
+          <tr><td>Planet Positions (live)</td><td>Astronomy API v2</td><td class="opt">Optional</td><td>Once on load</td></tr>
+          <tr><td>Planet Positions (fallback)</td><td>Meeus built-in</td><td class="tick">None</td><td>Always available</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <div class="icon">💡</div>
+      <div>The app is fully functional with <strong>zero API keys</strong>. The optional Astronomy API integration (<code>VITE_ASTRO_APP_ID</code> + <code>VITE_ASTRO_APP_SECRET</code>) upgrades planet positions from computed approximations to live astronomical data.</div>
+    </div>
+  </div>
+
+  <!-- 7. Design -->
+  <div class="section">
+    <div class="section-number">Section 07</div>
+    <h2>UI/UX Design System</h2>
+
+    <h3>Design Philosophy</h3>
+    <p>AstraWatch adopts a <strong>mission control</strong> aesthetic — dark, information-dense, visually precise. Every element reinforces the space theme: glassmorphism panels evoke spacecraft viewports, monospace telemetry numbers feel technical, and neon accents echo radar/display screens.</p>
+
+    <h3>Color Palette</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Token</th><th>Hex</th><th>Usage</th></tr></thead>
+        <tbody>
+          <tr><td><code>--space-black</code></td><td>#050a14</td><td>Page background</td></tr>
+          <tr><td><code>--deep-navy</code></td><td>#070f1f</td><td>Panel backgrounds</td></tr>
+          <tr><td><code>--cosmic-blue</code></td><td>#3b82f6</td><td>Primary accent, active tabs, ISS trail</td></tr>
+          <tr><td><code>--orbit-cyan</code></td><td>#06b6d4</td><td>ISS marker, live indicators, icons</td></tr>
+          <tr><td><code>--aurora-green</code></td><td>#10b981</td><td>Live badge, visible planet indicator</td></tr>
+          <tr><td><code>--solar-gold</code></td><td>#f59e0b</td><td>Magnitude values, warnings</td></tr>
+          <tr><td><code>--mars-red</code></td><td>#ef4444</td><td>Errors, below-horizon indicator</td></tr>
+          <tr><td><code>--star-white</code></td><td>#e8f4ff</td><td>Primary text</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Typography</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Role</th><th>Font</th><th>Weight</th></tr></thead>
+        <tbody>
+          <tr><td>Headings / UI Labels</td><td>Space Grotesk</td><td>400–700</td></tr>
+          <tr><td>Body / Paragraphs</td><td>Inter</td><td>300–600</td></tr>
+          <tr><td>Telemetry Numbers</td><td>JetBrains Mono</td><td>400–500</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Animation Inventory</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Class</th><th>Effect</th><th>Duration</th></tr></thead>
+        <tbody>
+          <tr><td><code>.orbit-ring</code></td><td>Continuous SVG ring rotation on logo</td><td>6s linear infinite</td></tr>
+          <tr><td><code>.pulse-dot</code></td><td>Scale + opacity breathing (LIVE indicator)</td><td>1.5s ease-in-out infinite</td></tr>
+          <tr><td><code>.loader</code></td><td>Spinning ring loading state</td><td>0.8s linear infinite</td></tr>
+          <tr><td><code>.fade-in</code></td><td>Slide up + fade in on mount</td><td>0.5s ease forwards</td></tr>
+          <tr><td><code>.glass-hover</code></td><td>Translate Y + border glow on hover</td><td>0.3s ease</td></tr>
+          <tr><td>Star canvas</td><td>Per-star alpha oscillation (twinkle)</td><td>~2–4s randomized</td></tr>
+          <tr><td>Globe fly-to</td><td>Camera pan to ISS position</td><td>1s (Globe.GL built-in)</td></tr>
+          <tr><td>Altitude bar</td><td>Width transition on planet data update</td><td>0.7s ease</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 8. Components -->
+  <div class="section">
+    <div class="section-number">Section 08</div>
+    <h2>Component & Hook Architecture</h2>
+
+    <h3>Component Tree</h3>
+    <pre><code>App
+├── Navbar         — logo, tab switcher (Globe / Sky), location display
+├── ISSPanel       — 2×3 telemetry stat grid (sidebar)
+│   └── Stat (×6)  — reusable telemetry card subcomponent
+└── Main
+    ├── GlobeView  — WebGL 3D globe, ISS + satellite layers, trail arcs
+    └── SkyPanel   — night sky tab
+        ├── StarCanvas    — canvas star field (200 stars, 60fps)
+        └── PlanetCard(×7)— altitude bar, visibility badge, magnitudes</code></pre>
+
+    <h3>Custom Hook Specifications</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Hook</th><th>Returns</th><th>Behavior</th></tr></thead>
+        <tbody>
+          <tr><td><code>useISS()</code></td><td>issData, loading, error, trail</td><td>Polls every 5s; circular trail buffer (30 pts); auto-clears on unmount</td></tr>
+          <tr><td><code>useSatellites()</code></td><td>positions, satCount, loading, error</td><td>Fetches TLEs on mount; SGP4 propagation every 10s; hardcoded fallback on failure</td></tr>
+          <tr><td><code>usePlanets(lat, lng)</code></td><td>planets, loading, source</td><td>Astronomy API if keys set; Meeus fallback otherwise; re-runs on location change</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 9. Deployment -->
+  <div class="section">
+    <div class="section-number">Section 09</div>
+    <h2>Deployment & DevOps</h2>
+
+    <h3>CI/CD Pipeline</h3>
+    <pre><code>Push to GitHub (main branch)
+        │
+        ▼
+Vercel detects push → npm install (all dependencies)
+        │
+        ▼
+npm run build  →  vite build  →  dist/ generated
+        │
+        ▼
+Vercel Edge Network deployment → Production URL live</code></pre>
+
+    <h3>Dependency Placement (Critical)</h3>
+    <p>All build-time packages (<code>vite</code>, <code>@vitejs/plugin-react</code>, <code>@tailwindcss/vite</code>, <code>tailwindcss</code>) are in <strong><code>dependencies</code></strong>, not <code>devDependencies</code>. Vercel's production environment only installs <code>dependencies</code> by default, causing build failures if build tools are categorized as dev-only.</p>
+
+    <h3>Build Output</h3>
+    <div class="card-grid">
+      <div class="stat-card"><div class="stat-value">~2.1 MB</div><div class="stat-label">JS Bundle (minified)</div></div>
+      <div class="stat-card"><div class="stat-value">~611 KB</div><div class="stat-label">JS Bundle (gzipped)</div></div>
+      <div class="stat-card"><div class="stat-value">~13 KB</div><div class="stat-label">CSS Bundle</div></div>
+      <div class="stat-card"><div class="stat-value">~28s</div><div class="stat-label">Build Time</div></div>
+    </div>
+    <p style="margin-top:10px;font-size:0.85rem;color:var(--muted);">Large JS bundle is expected — Three.js and Globe.GL together account for the majority. This is a known trade-off for GPU-accelerated 3D globe rendering in the browser.</p>
+  </div>
+
+  <!-- 10. Challenges -->
+  <div class="section">
+    <div class="section-number">Section 10</div>
+    <h2>Challenges & Solutions</h2>
+
+    <div class="challenge-card">
+      <div class="problem">⚠ Challenge 1 — Vercel Skipping Build Dependencies</div>
+      <p>Vercel's production builds skip <code>devDependencies</code>, causing <em>"Cannot find package '@tailwindcss/vite'"</em> errors despite the package being installed locally.</p>
+      <div class="solution">✅ Solution</div>
+      <p>Moved all build-time packages (<code>vite</code>, <code>@vitejs/plugin-react</code>, <code>@tailwindcss/vite</code>, <code>tailwindcss</code>) from <code>devDependencies</code> to <code>dependencies</code>.</p>
+    </div>
+
+    <div class="challenge-card">
+      <div class="problem">⚠ Challenge 2 — Vite 8 Rolldown Incompatibility</div>
+      <p>Vite 8 uses an experimental Rust-based bundler (rolldown) that fails with <code>satellite.js@7</code>'s WASM pthreads worker (top-level <code>await</code> in <code>iife</code> output format not supported) and with <code>globe.gl</code>'s <code>lodash-es</code> transitive imports.</p>
+      <div class="solution">✅ Solution</div>
+      <p>Downgraded to Vite 5 (stable rollup bundler) and <code>satellite.js@4</code> (pure JS, same API, no WASM). Both issues resolved instantly.</p>
+    </div>
+
+    <div class="challenge-card">
+      <div class="problem">⚠ Challenge 3 — CelesTrak CORS Policy</div>
+      <p>CelesTrak does not consistently set <code>Access-Control-Allow-Origin</code> headers, making direct browser TLE fetches unreliable across different networks.</p>
+      <div class="solution">✅ Solution</div>
+      <p>Implemented a hardcoded <code>FALLBACK_TLE</code> constant (ISS + 5 Starlinks) that activates silently on any network or CORS error. App continues to function with minimal disruption.</p>
+    </div>
+
+    <div class="challenge-card">
+      <div class="problem">⚠ Challenge 4 — ISS Trail Without a Database</div>
+      <p>The ISS travels ~7.66 km/s — a persistent visual trail requires storing recent positions, but there is no server or database in this purely client-side app.</p>
+      <div class="solution">✅ Solution</div>
+      <p>Implemented a <strong>client-side circular buffer</strong> in <code>useISS</code>, capped at 30 positions, passed directly to Globe.GL's arcs layer as sequential start/end point pairs.</p>
+    </div>
+
+    <div class="challenge-card">
+      <div class="problem">⚠ Challenge 5 — CSS Import Order Warning</div>
+      <p>Tailwind's <code>@import "tailwindcss"</code> was placed before the Google Fonts <code>@import url()</code>, violating the CSS spec rule that all <code>@import</code>s must precede other rules.</p>
+      <div class="solution">✅ Solution</div>
+      <p>Reordered so Google Fonts <code>@import url()</code> appears first, followed by <code>@import "tailwindcss"</code>.</p>
+    </div>
+  </div>
+
+  <!-- 11. Performance -->
+  <div class="section">
+    <div class="section-number">Section 11</div>
+    <h2>Performance Metrics</h2>
+    <div class="card-grid">
+      <div class="stat-card"><div class="stat-value">5s</div><div class="stat-label">ISS Poll Interval</div></div>
+      <div class="stat-card"><div class="stat-value">10s</div><div class="stat-label">Satellite Re-propagation</div></div>
+      <div class="stat-card"><div class="stat-value">30</div><div class="stat-label">ISS Trail Points</div></div>
+      <div class="stat-card"><div class="stat-value">200</div><div class="stat-label">Max Satellite Dots</div></div>
+      <div class="stat-card"><div class="stat-value">60fps</div><div class="stat-label">Star Canvas Animation</div></div>
+      <div class="stat-card"><div class="stat-value">2,209</div><div class="stat-label">Modules Transformed</div></div>
+    </div>
+  </div>
+
+  <!-- 12. Future Scope -->
+  <div class="section">
+    <div class="section-number">Section 12</div>
+    <h2>Future Scope</h2>
+    <h3>Near-term Enhancements</h3>
+    <ul>
+      <li><strong>Bundle optimization</strong> — Code-split Three.js/Globe.GL via dynamic <code>import()</code> to reduce initial load</li>
+      <li><strong>PWA / Service Worker</strong> — Cache TLE data and ISS last-known position for offline use</li>
+      <li><strong>ISS Pass Prediction</strong> — Use SGP4 to predict when the ISS will pass over the user's location</li>
+      <li><strong>Satellite search</strong> — Filter and highlight satellites by name or NORAD ID</li>
+    </ul>
+    <h3>Medium-term Features</h3>
+    <ul>
+      <li><strong>Constellation overlay</strong> — Draw constellation lines on the Sky View using star catalog data</li>
+      <li><strong>Moon phase tracker</strong> — Lunar phase, rise/set times, and illumination percentage</li>
+      <li><strong>Historical playback</strong> — Replay ISS orbital path for a selected date using archived TLEs</li>
+      <li><strong>Space events calendar</strong> — Launches, spacewalks, and astronomical events</li>
+    </ul>
+    <h3>Long-term Vision</h3>
+    <ul>
+      <li><strong>AR mode</strong> — Device camera + orientation API to overlay satellite positions on the real sky</li>
+      <li><strong>Multi-satellite telemetry</strong> — Expand sidebar to any clicked satellite, not just ISS</li>
+      <li><strong>Social sharing</strong> — Share ISS pass times via generated links with embedded sky maps</li>
+    </ul>
+  </div>
+
+  <!-- 13. Conclusion -->
+  <div class="section">
+    <div class="section-number">Section 13</div>
+    <h2>Conclusion</h2>
+    <p>AstraWatch successfully demonstrates how modern browser APIs and open-source astronomy data can be combined into a compelling, educational space visualization tool — with no backend infrastructure, no mandatory API keys, and no installation required.</p>
+    <p>The project showcases:</p>
+    <ul>
+      <li><strong>Real-time data integration</strong> from multiple free APIs with robust fallback handling</li>
+      <li><strong>WebGL 3D visualization</strong> using Globe.GL and Three.js for GPU-accelerated rendering</li>
+      <li><strong>Orbital mechanics in the browser</strong> via satellite.js SGP4 propagation from raw TLE data</li>
+      <li><strong>Production-grade deployment</strong> on Vercel's global CDN with continuous delivery from GitHub</li>
+      <li><strong>Thoughtful UX design</strong> — mission control aesthetic that is visually impressive without sacrificing usability</li>
+    </ul>
+    <p>The application is open-source, publicly deployed, and immediately usable by anyone interested in space — from students learning about orbital mechanics to enthusiasts who want to know exactly where the ISS is right now.</p>
+
+    <div class="callout" style="margin-top:24px;">
+      <div class="icon">🔗</div>
+      <div>
+        <strong>Live Demo:</strong> <a href="https://astra-web-git-main-tanvi-nemas-projects.vercel.app">astra-web-git-main-tanvi-nemas-projects.vercel.app</a><br/>
+        <strong>Source Code:</strong> <a href="https://github.com/TanviNema1/Astra-Web-">github.com/TanviNema1/Astra-Web-</a>
+      </div>
+    </div>
+  </div>
+
+  <hr />
+  <div class="report-footer">
+    <p>AstraWatch · Project Review Report · June 2026 · Tanvi Nema</p>
+    <p style="margin-top:6px;">Built with ❤️ for space enthusiasts · Powered by open-source astronomy data</p>
+  </div>
+
+</div>
+
+<script>
+  // Keyboard shortcut: Ctrl+P / Cmd+P triggers native browser Print → Save as PDF
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+      e.preventDefault();
+      window.print();
+    }
+  });
+</script>
+</body>
+</html>
